@@ -111,7 +111,7 @@ class App extends React.Component {
               </Card.Body>
             </Card>
           ))}
-        <SockJsClient url='http://localhost:8085/livestatus-websocket' topics={['/topic/status']}
+        <SockJsClient url='http://ec2-35-174-0-145.compute-1.amazonaws.com:8085/livestatus-websocket' topics={['/topic/status']}
             onMessage={(data) => { 
               //this.setState({vin:msg})
               console.log('entrou aqui', data);
