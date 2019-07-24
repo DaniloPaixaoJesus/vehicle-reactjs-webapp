@@ -1,75 +1,37 @@
 import React from 'react';
 import SockJsClient from 'react-stomp';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
-import logo from './logo.svg';
+import DefaultCard from './cards';
+import {GetAllCars} from '../src/services/cars';
 import './App.css';
 
+var vehicles = [];
 class App extends React.Component {
-  
-  vehicles;
 
   constructor(props) {
     super(props);
     this.state = {
-      error: null,
-      isLoaded: false,
       items: [],
-      vin:''
+      owner: ''
     };
   }
 
   componentDidMount() {
-      // let socket = new SockJS('http://localhost:8085/livestatus-websocket');
-      // let stompClient = Stomp.over(socket);
-      // stompClient.connect({}, function (frame) {
-	    //     stompClient.subscribe('/topic/status', function (data) {
-	    //     	var vehicleStatus = JSON.parse(data.body);
-      //       console.log(vehicleStatus);
-      //       // const { error, isLoaded, items } = this.state;
-      //       // items.map(item => {  
-      //       //   if(scoreJson.vin == item.vin){
-      //       //     return {scoreJson}
-      //       //   }
-      //       // });
-                
-	            
-	    //     });
-      // });
       this.getAllVehicles();
   }
-
-  getAllVehicles(){
-    fetch("http://swedish-challenge.danilopaixao.com.br:8080/vehicle-service/api/v1/vehicles")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          console.log(result)
-          this.vehicles = result;
-          this.setState({
-            isLoaded: true,
-            items: result
-          });
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      )
+  
+  async getAllVehicles(){
+    let retorno = await GetAllCars();
+    
+    retorno.forEach(v => {
+      vehicles.push(v);
+    });
+    this.setState({
+      isLoaded: true,
+      items: retorno
+    });
   }
 
   updateData(data){
-    console.log('updateData-Vin:', data);
-    console.log('updateData-Vin.vin:', data.vin);
-    console.log('updateData-Vin.status:', data.status);
-    console.log('this.state.items=>', this.state.items)
     let newVehicles = this.state.items.map( v => {
       if(v.vin == data.vin){
         v.status = data.status;
@@ -79,51 +41,66 @@ class App extends React.Component {
     this.setState({items:newVehicles});
   }
 
+  handleOnChange(e){
+    const value = e.target.value;
+    let vehiclesTmp = [...vehicles];
+    let filteredVehicles = vehiclesTmp.filter( v => {
+      if(value == 'TODOS'){
+        return v
+      }else if(v.status === value){
+        return v
+      }
+    });
+    this.setState({items:filteredVehicles});
+    
+  }
+
+  handleOnChangeOwner(e){
+    const value = e.target.value;
+    let vehiclesTmp = [...vehicles];
+    let filteredVehicles = vehiclesTmp.filter( v => {
+      if(value == ''){
+        return v
+      }else if(v.driverName.toLowerCase().includes(value.toLowerCase())){
+        return v
+      }
+    });
+    this.setState({items:filteredVehicles});
+  }
+
   render() {
     const { error, isLoaded, items, vin } = this.state;
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-      return <div>Loading...</div>;
-    } else {
-      return (
-        <div style={{width: '100%', height: '100%', display: 'flex', margin: '20px', padding: '20px', wordBreak:'break-all'}} >
-          <link
-            rel="stylesheet"
-            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-            crossorigin="*"
-          />
-          {items.map(item => (
-            <Card style={{ width: '550px', margin: '5px', padding: '5px' }} id={item.vin} >
-              <Card.Body>
-                <Card.Title>{item.name}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">{item.vin}</Card.Subtitle>
-                <Card.Text>
-                {item.status}
-                </Card.Text>
-                <Card.Text>
-                {item.driverLicenseCategory}
-                </Card.Text>
-                <Card.Text>
-                {item.driverAddress}
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          ))}
-        <SockJsClient url='http://ec2-35-174-0-145.compute-1.amazonaws.com:8085/livestatus-websocket' topics={['/topic/status']}
+    return <div className="App">
+      <header className="App-header">
+          <div className="container">
+              <form name="car-filter" className="car-filter">
+                  <div className="group">
+                      <label htmlFor ="owner">Owner: </label>
+                      {/* <input name="owner" /> */}
+                      <input name="owner" onChange={(event) => this.handleOnChangeOwner(event)} />
+                  </div>                
+                  <div className="group">
+                      <label htmlFor ="status">Status: </label>
+                      <select name="status" onChange={(event) => this.handleOnChange(event)}   >
+                          <option value="TODOS" selected>TODOS</option>
+                          <option value="OFF">OFFLINE</option>
+                          <option value="ON">ONLINE</option>
+                      </select>
+                  </div>                
+              </form>
+          </div>
+      </header>
+      <section className="car-infos">
+          <div className="container">
+              <DefaultCard infos={items} />
+            </div>                  
+      </section>
+      <SockJsClient url='http://ec2-35-174-0-145.compute-1.amazonaws.com:8085/livestatus-websocket' topics={['/topic/status']}
             onMessage={(data) => { 
-              //this.setState({vin:msg})
-              console.log('entrou aqui', data);
-              //var vehicleStatus = JSON.parse(data);
               this.updateData(data)
-              
              }}
           />
-          </div>
-        
-      );
-    }
+    </div>
   }
 
 }
