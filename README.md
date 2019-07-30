@@ -1,68 +1,55 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Solution
+The Web app display all vehicles on the dashboard. Every vehicle should send a ping in order to keep its status ONLINE. After 1 minute without send any ping, the status will switch to OFFLINE automatically.
+The solution is running into AWS EC2 instance http://swedish-challenge.danilopaixao.com.br.
+You can send pings to verify if the vehicle is online on url http://swedish-challenge.danilopaixao.com.br:8085/send.html
 
-## Available Scripts
+### Architecture
+![](https://https://s3.amazonaws.com/bucket.danilopaixao.com.br/spring-cloud-vehicle-solution.png)
 
-In the project directory, you can run:
+The solution was built with Spring Cloud Microservices Chassis Framework.
+Service discovery: Spring Cloud Netflix Eureka. 
+Circuit breaker: Spring Cloud Netflix Hystrix.
+API Gateway and Filter: Zuul API Gateway.
+Springboot as a base of Spring Cloud framework and Business Microservices.
 
-### `npm start`
+### Microservice
+The services was built with spring core framework, springboot, springdata, springmvc and spring scheduled tasks.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Rabbit MQ
+A messaging broker to provide publish / subscribe, asynchronous processing and queues.
+I guess that the quantity of vehicle’s ping request could increase a lot. Message broker could be a good deal to manage these mount of request.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+### Redis Database
+Fast key/value database. I used this database to check and maintain the status vehicle.
+For instance, if the status is the same, I do not switch the status vehicle.
 
-### `npm test`
+### MongoDB
+Document database to store all information about vehicles and drivers. Each microservice has its own database instance.
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Web server NGINX
+Container where web app is running. This web app can be deployed also into AWS S3 static site. The frontend was built with ReactJS. I also used Websocket to improve the user expirience.
 
-### `npm run build`
+### Docker/Docker compose
+The whole solution is dockerized. Each microservice run into own container. I also use docker compose to create all containers.
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Deployment steps
+Create the directory “swedq-challenge” as root of entire application.
+Clone all repositories of the solution
+https://github.com/DaniloPaixaoJesus/zuul-api-gateway-server.git
+https://github.com/DaniloPaixaoJesus/microservice-eureka-server.git
+https://github.com/DaniloPaixaoJesus/vehicle-microservice-eureka-client.git
+https://github.com/DaniloPaixaoJesus/driver-microservice-eureka-client.git
+https://github.com/DaniloPaixaoJesus/vehicle-track-microservice-eureka-client.git
+https://github.com/DaniloPaixaoJesus/vehicle-websocket-eureka-client.git
+https://github.com/DaniloPaixaoJesus/vehicle-reactjs-webapp.git
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+Run the command “mvn clean install“ for whole repositories, except reactjs web app.
+Run the command “yarn build” to build reactjs web app.
+Copy files docker-compose.yml and rabbitmq.Dockerfile from “microservice-eureka-server” to “swedq-challenge”.
+Run the command “docker-compose up –build”
+Request GET http://[host]:8080/driver-service/api/v1/drivers/init in order to create all drivers.
+Request GET http://[host]:8080/vehicle-service/api/v1/vehicles/init in order to create all vehicles.
+Access [host]:8080/vehicle-websocket/vehicles.html to change the status of any vehicles in order to test switch status feature.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Explain if it is possible to be in Serverless architecture and how?
+Yes, it is possible built some of these microservices in the serverless architecture. For instance, vehicle track microservice is a very short program with specif function. This microservice can be break into serverless functions.
