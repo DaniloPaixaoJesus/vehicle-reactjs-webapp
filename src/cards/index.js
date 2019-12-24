@@ -19,9 +19,8 @@ function DefaultCard ({infos}){
                             <p>{info.vin}</p>
                         </li>
                         <li>
-                            <p>{info.driverName}</p>
-                            <p>{info.driverLicenseCategory}</p>
-                            <p>{info.driverAddress}</p>
+                            <p>{info.name}</p>
+                            <p>{info.regNumber}</p>
                         </li>
                         <li className="status">
                             <span>{status}</span>
