@@ -8,7 +8,7 @@ function DefaultCard ({infos}){
             {infos && infos.map(function(info,index){
                 
                 let status = 'online'; 
-                if(info.status == 'OFF'){
+                if(info.status === 'OFF'){
                     status = 'offline';
                 }
                 

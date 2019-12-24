@@ -82,7 +82,7 @@ class App extends React.Component {
                   <div className="group">
                       <label htmlFor ="status">Status: </label>
                       <select name="status" onChange={(event) => this.handleOnChange(event)}   >
-                          <option value="TODOS" selected>TODOS</option>
+                          <option value="TODOS" defaultValue>TODOS</option>
                           <option value="OFF">OFFLINE</option>
                           <option value="ON">ONLINE</option>
                       </select>
