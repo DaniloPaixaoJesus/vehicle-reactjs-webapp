@@ -95,7 +95,8 @@ class App extends React.Component {
               <DefaultCard infos={items} />
             </div>                  
       </section>
-      <SockJsClient url='http://localhost:8085/livestatus-websocket' topics={['/topic/status']}
+      <SockJsClient url={process.env.REACT_APP_WEB_SOCKET_ENDPOINT} 
+            topics={[process.env.REACT_APP_WEB_SOCKET_TOPIC]}
             onMessage={(data) => { 
               this.updateData(data)
              }}

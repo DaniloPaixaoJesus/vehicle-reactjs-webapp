@@ -4,7 +4,7 @@ const GetAllCars = async () =>{
     
 
     const response = await fetch(
-        'http://localhost:8081/api/v1/vehicles',
+        process.env.REACT_APP_API_VEHICLES_ENDPOINT,
         {headers:{'Access-Control-Allow-Origin':'*'}}
     );
     const cars = await response.json();
@@ -13,7 +13,7 @@ const GetAllCars = async () =>{
 
 const GetCarByVin = async (vin) =>{   
     const response = await fetch(
-        `http://localhost:8081/api/v1/vehicles/${vin}`,
+        `${process.env.REACT_APP_API_VEHICLES_ENDPOINT}/${vin}`,
         {headers:{'Access-Control-Allow-Origin':'*'}}
     );
     const car = await response.json();
