@@ -2,6 +2,7 @@ import React from 'react';
 import SockJsClient from 'react-stomp';
 import DefaultCard from './cards';
 import {GetAllCars} from '../src/services/cars';
+import { Link } from 'react-router-dom'
 import './App.css';
 
 var vehicles = [];
@@ -15,7 +16,8 @@ class App extends React.Component {
     };
   }
 
-  componentDidMount() {
+  //componentDidMount() {
+  componentWillMount(){
       this.getAllVehicles();
   }
   
@@ -72,6 +74,7 @@ class App extends React.Component {
     const { error, isLoaded, items, vin } = this.state;
     return <div className="App">
       <header className="App-header">
+          <Link to="/map">MapView</Link>
           <div className="container">
               <form name="car-filter" className="car-filter">
                   <div className="group">
