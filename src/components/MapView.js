@@ -8,6 +8,9 @@ export class MapView extends Component {
     constructor(props) {
       super(props);
   
+      /*this.state = {
+        vehicles: []
+      }*/
       this.state = {
         vehicles: []
       }
@@ -17,8 +20,8 @@ export class MapView extends Component {
       return this.state.vehicles.map((v, index) => {
         console.log('displayMarkers=>', v)
         return <Marker key={index} id={index} position={{
-         lat: '-23.494119',//v.geolocation.latitude,
-         lng: '-46.855306'//v.geolocation.longitude
+            lat: v.latitude,
+            lng: v.longitude
        }}
        onClick={() => console.log("You clicked me!=>", v.vin)} />
       })
@@ -29,9 +32,18 @@ export class MapView extends Component {
     }
 
     async getAllVehicles(){
-        let retorno = await GetAllCars();
-        console.log('retorno=>', retorno);
-        this.setState({vehicles:retorno});
+        //let retorno = await GetAllCars();
+        //console.log('retorno=>', retorno);
+        //this.setState({vehicles:retorno});
+
+        this.setState({
+            vehicles: [
+                        //{latitude: 47.3084488, longitude: -122.2140121},
+                        //{latitude: 47.5524695, longitude: -122.0425407}
+                        {latitude: -23.492797, longitude: -46.851263},
+                        {latitude: -23.500549, longitude: -46.841415}
+                    ]
+            });
     }
   
     render() {
@@ -44,9 +56,9 @@ export class MapView extends Component {
             </header>
             <Map
                 google={this.props.google}
-                zoom={16}
+                zoom={12}
                 style={mapStyles}
-                initialCenter={{ lat: -23.40311566, lng: -46.33379166}}
+                initialCenter={{ lat: -23.508956, lng: -46.832757}}
             >
                 {this.displayMarkers()}
             </Map>
