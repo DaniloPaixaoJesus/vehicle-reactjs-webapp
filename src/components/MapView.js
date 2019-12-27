@@ -32,18 +32,24 @@ export class MapView extends Component {
     }
 
     async getAllVehicles(){
-        //let retorno = await GetAllCars();
-        //console.log('retorno=>', retorno);
-        //this.setState({vehicles:retorno});
-
+        let retorno = await GetAllCars();
+        let vehiclesTmp = retorno.map((v, index) => {
+          return {
+            latitude: v.geolocation.latitude,
+            longitude: v.geolocation.longitude
+         }
+        });
+        let vehiclesTmpArr = Array.from(vehiclesTmp);
+        //console.log(vehiclesTmpArr);
         this.setState({
+          vehicles: vehiclesTmpArr
+          });
+        /*this.setState({
             vehicles: [
-                        //{latitude: 47.3084488, longitude: -122.2140121},
-                        //{latitude: 47.5524695, longitude: -122.0425407}
                         {latitude: -23.492797, longitude: -46.851263},
                         {latitude: -23.500549, longitude: -46.841415}
                     ]
-            });
+            });*/
     }
   
     render() {
