@@ -48,10 +48,10 @@ export class MapView extends Component {
   
     render() {
       return (
-        <div className="App">
-            <header className="App-header">
-                <div className="container">
-                    <Link to="/">List View</Link>
+        <div className="MapView">
+            <header className="MapView-header">
+                <div className="MapView-menu">
+                    <Link to="/">Back to List View</Link>
                 </div>
             </header>
             <Map

@@ -74,9 +74,10 @@ class App extends React.Component {
     const { error, isLoaded, items, vin } = this.state;
     return <div className="App">
       <header className="App-header">
-          <Link to="/map">MapView</Link>
           <div className="container">
+              
               <form name="car-filter" className="car-filter">
+              <div className="MapView-button"><Link to="/map">MapView</Link></div>
                   <div className="group">
                       <label htmlFor ="owner">Owner: </label>
                       {/* <input name="owner" /> */}

@@ -126,13 +126,17 @@ select {
   color:#6a6a6a;
 }
 
-
 .car-filter {
     height: 80px;
     margin:0 20px;
     display: flex;
     align-items: center;
     justify-content: flex-end;
+}
+
+.MapView-button{
+  display: flex;
+  margin-right: 50%;
 }
 
 .car-filter span {
