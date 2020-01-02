@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import SockJsClient from 'react-stomp';
 import { Link } from 'react-router-dom'
 import {GetAllCars} from '../services/cars'
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
@@ -35,6 +36,7 @@ export class MapView extends Component {
         let retorno = await GetAllCars();
         let vehiclesTmp = retorno.map((v, index) => {
           return {
+            vin: v.vin,
             latitude: v.geolocation.latitude,
             longitude: v.geolocation.longitude
          }
@@ -50,6 +52,18 @@ export class MapView extends Component {
                         {latitude: -23.500549, longitude: -46.841415}
                     ]
             });*/
+    }
+
+    updateData(data){
+      let newVehicles = this.state.vehicles.map( v => {
+        console.log(v);
+        if(v.vin == data.vin){
+          v.latitude = data.geolocation.latitude;
+          v.longitude = data.geolocation.longitude;
+        }
+        return v
+      });
+      this.setState({vehicles:newVehicles});
     }
   
     render() {
@@ -68,6 +82,12 @@ export class MapView extends Component {
             >
                 {this.displayMarkers()}
             </Map>
+            <SockJsClient url={process.env.REACT_APP_WEB_SOCKET_ENDPOINT} 
+            topics={[process.env.REACT_APP_WEB_SOCKET_TOPIC]}
+            onMessage={(data) => { 
+              this.updateData(data)
+             }}
+          />
         </div>
       );
     }
