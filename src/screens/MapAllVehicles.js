@@ -3,15 +3,11 @@ import SockJsClient from 'react-stomp';
 import { Link } from 'react-router-dom'
 import {GetAllCars} from '../services/cars'
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
-import './MapView.css';
+import './MapAllVehicles.css';
 
-export class MapView extends Component {
+export class MapAllVehicles extends Component {
     constructor(props) {
       super(props);
-  
-      /*this.state = {
-        vehicles: []
-      }*/
       this.state = {
         vehicles: []
       }
@@ -56,7 +52,7 @@ export class MapView extends Component {
 
     updateData(data){
       let newVehicles = this.state.vehicles.map( v => {
-        console.log(v);
+        // console.log(v);
         if(v.vin == data.vin){
           v.latitude = data.geolocation.latitude;
           v.longitude = data.geolocation.longitude;
@@ -68,9 +64,9 @@ export class MapView extends Component {
   
     render() {
       return (
-        <div className="MapView">
-            <header className="MapView-header">
-                <div className="MapView-menu">
+        <div className="MapAllVehicles">
+            <header className="MapAllVehicles-header">
+                <div className="MapAllVehicles-menu">
                     <Link to="/">Back to List View</Link>
                 </div>
             </header>
@@ -100,4 +96,4 @@ const mapStyles = {
 
 export default GoogleApiWrapper({
   apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY
-})(MapView);
+})(MapAllVehicles);
